@@ -72,19 +72,16 @@
         }
 
         .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--apple-green) 0%, #2fb350 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: -0.5px;
-            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
-        }
+    width: 80px;               /* Ajusta el ancho a lo que necesites */
+    height: 80px;              /* Ajusta la altura también */
+    background-image: url('images/bglabs_logo.jpeg');
+    background-size: contain;  /* ➜ Muestra la imagen completa */
+    background-repeat: no-repeat; /* ➜ Quita la repetición */
+    background-position: center;  /* ➜ Centra la imagen */
+    border-radius: 12px;
+}
+
+
 
         .logo-text {
             font-size: 20px;
@@ -644,11 +641,8 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <div class="logo-icon">BG</div>
-                <div>
-                    <div class="logo-text">BG Labs</div>
-                    <div class="logo-subtitle">Colombia</div>
-                </div>
+                <div class="logo-icon"></div>
+            
             </div>
         </div>
         <nav class="nav-menu">
@@ -666,7 +660,7 @@
                 Labores de Cultivo
             </a>
         </nav>
-    </aside>
+    </aside>    
 
     <!-- Main Content -->
     <main class="main-content">
