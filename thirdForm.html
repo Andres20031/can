@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BG Labs Colombia - Sistema de Gestión</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts - SF Pro inspired -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --apple-bg: #f5f5f7;
+            --apple-card: #ffffff;
+            --apple-text: #1d1d1f;
+            --apple-text-secondary: #86868b;
+            --apple-blue: #0071e3;
+            --apple-blue-hover: #0077ed;
+            --apple-green: #34c759;
+            --apple-green-light: #e8f8ec;
+            --apple-border: #d2d2d7;
+            --apple-input-bg: #f5f5f7;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--apple-bg);
+            color: var(--apple-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-right: 1px solid var(--apple-border);
+            z-index: 1000;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--apple-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--apple-green) 0%, #2fb350 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: -0.5px;
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 11px;
+            color: var(--apple-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--apple-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 12px 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--apple-text);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-bottom: 4px;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--apple-text);
+        }
+
+        .nav-link.active {
+            background: var(--apple-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+        }
+
+        .nav-link i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* Header */
+        .main-header {
+            position: sticky;
+            top: 0;
+            height: var(--header-height);
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--apple-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--apple-text);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--apple-text) 0%, #424245 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 17px;
+            color: var(--apple-text-secondary);
+            margin-bottom: 32px;
+        }
+
+        /* Cards */
+        .form-card {
+            background: var(--apple-card);
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .form-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header-custom {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--apple-border);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--apple-green-light);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--apple-green);
+            font-size: 22px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.4px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: var(--apple-text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Form Elements */
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--apple-text);
+            margin-bottom: 8px;
+            letter-spacing: -0.1px;
+        }
+
+        .form-control, .form-select {
+            background: var(--apple-input-bg);
+            border: 1px solid transparent;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: white;
+            border-color: var(--apple-blue);
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--apple-text-secondary);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Radio Buttons - Apple Style */
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-option label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--apple-input-bg);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            background: rgba(0, 113, 227, 0.1);
+            border-color: var(--apple-blue);
+            color: var(--apple-blue);
+        }
+
+        .radio-option label:hover {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: var(--apple-input-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 24px;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--apple-green) 0%, #2fb350 100%);
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 16px 14px;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 14px;
+            border-bottom: 1px solid var(--apple-border);
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .table .form-control {
+            padding: 10px 12px;
+            font-size: 14px;
+            background: white;
+        }
+
+        /* Section Divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--apple-border), transparent);
+            margin: 32px 0;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--apple-green);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--apple-green);
+            border-radius: 2px;
+        }
+
+        /* Buttons */
+        .btn-apple {
+            background: var(--apple-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-apple:hover {
+            background: var(--apple-blue-hover);
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(0, 113, 227, 0.35);
+        }
+
+        .btn-apple-secondary {
+            background: var(--apple-input-bg);
+            color: var(--apple-text);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-apple-secondary:hover {
+            background: #e8e8ed;
+        }
+
+        .btn-group-form {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--apple-border);
+        }
+
+        /* Signature Box */
+        .signature-box {
+            background: var(--apple-input-bg);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .signature-box h6 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--apple-text);
+        }
+
+        /* Page sections - hidden by default */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay {
+                display: block;
+                pointer-events: none;
+            }
+
+            .sidebar-overlay.active {
+                pointer-events: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .form-card {
+                padding: 24px;
+                border-radius: 16px;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .radio-option label {
+                width: 100%;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .table {
+                min-width: 700px;
+            }
+
+            .btn-group-form {
+                flex-direction: column;
+            }
+
+            .signature-box {
+                margin-bottom: 16px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .content-area {
+                padding: 16px;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+
+            .card-header-custom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+        }
+
+        /* Add Row Button */
+        .add-row-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--apple-green-light);
+            color: var(--apple-green);
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 16px;
+        }
+
+        .add-row-btn:hover {
+            background: var(--apple-green);
+            color: white;
+        }
+
+        /* Success Animation */
+        .success-toast {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: var(--apple-green);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 30px rgba(52, 199, 89, 0.35);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 2000;
+        }
+
+        .success-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">BG</div>
+                <div>
+                    <div class="logo-text">BG Labs</div>
+                    <div class="logo-subtitle">Colombia</div>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-section-title">Formularios</div>
+            <a href="#" class="nav-link active" data-page="limpieza">
+                <i class="bi bi-droplet"></i>
+                Limpieza y Desinfección
+            </a>
+            <a href="#" class="nav-link" data-page="siembra">
+                <i class="bi bi-flower1"></i>
+                Orden de Siembra
+            </a>
+            <a href="#" class="nav-link" data-page="labores">
+                <i class="bi bi-clipboard-check"></i>
+                Labores de Cultivo
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="main-header">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="bi bi-list"></i>
+            </button>
+            <h1 class="header-title">Sistema de Gestión de Cultivos</h1>
+            <div></div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Page 1: Limpieza y Desinfección -->
+            <section class="page-section active" id="page-limpieza">
+                <h1 class="page-title">Limpieza y Desinfección</h1>
+                <p class="page-subtitle">Rótulo de limpieza y desinfección de áreas, equipos y herramientas</p>
+
+                <div class="form-card">
+                    <div class="card-header-custom">
+                        <div class="card-icon">
+                            <i class="bi bi-droplet-fill"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Información General</h3>
+                            <p class="card-description">Complete los datos del área y equipo</p>
+                        </div>
+                    </div>
+
+                    <form id="formLimpieza">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <label class="form-label">Área</label>
+                                <input type="text" class="form-control" placeholder="Ingrese el área">
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Equipo, Elemento o Herramienta</label>
+                                <input type="text" class="form-control" placeholder="Nombre del equipo">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Código de Equipo</label>
+                                <input type="text" class="form-control" placeholder="Código">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <h5 class="section-title">Estado</h5>
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <label class="form-label">Seleccione el estado actual</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" name="estado" id="sucio" value="sucio">
+                                        <label for="sucio"><i class="bi bi-x-circle"></i> Sucio</label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" name="estado" id="proceso" value="proceso">
+                                        <label for="proceso"><i class="bi bi-arrow-repeat"></i> En Proceso de Limpieza</label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" name="estado" id="limpio" value="limpio">
+                                        <label for="limpio"><i class="bi bi-check-circle"></i> Limpio</label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" name="estado" id="sanitizado" value="sanitizado">
+                                        <label for="sanitizado"><i class="bi bi-shield-check"></i> Sanitizado</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha de Estado</label>
+                                <input type="datetime-local" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <h5 class="section-title">Información del Producto</h5>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Producto Anterior</label>
+                                <input type="text" class="form-control" placeholder="Producto anterior">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Lote Producto Anterior</label>
+                                <input type="text" class="form-control" placeholder="Lote">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Producto en Proceso</label>
+                                <input type="text" class="form-control" placeholder="Producto en proceso">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Lote Producto en Proceso</label>
+                                <input type="text" class="form-control" placeholder="Lote">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <h5 class="section-title">Agentes y Tiempos</h5>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Agente de Limpieza y Concentración</label>
+                                <input type="text" class="form-control" placeholder="Agente de limpieza">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Desinfectante de Rotación y Concentración</label>
+                                <input type="text" class="form-control" placeholder="Desinfectante">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha y Hora de Realización</label>
+                                <input type="datetime-local" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Vigencia de Limpieza (4 días)</label>
+                                <input type="datetime-local" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Realizado por</label>
+                                <input type="text" class="form-control" placeholder="Nombre">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Verificado por</label>
+                                <input type="text" class="form-control" placeholder="Nombre">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <h5 class="section-title">Observaciones</h5>
+                        <div class="row">
+                            <div class="col-12">
+                                <textarea class="form-control" placeholder="Escriba sus observaciones aquí..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="btn-group-form">
+                            <button type="submit" class="btn-apple">
+                                <i class="bi bi-check-lg me-2"></i>Guardar Registro
+                            </button>
+                            <button type="reset" class="btn-apple-secondary">
+                                <i class="bi bi-arrow-counterclockwise me-2"></i>Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Page 2: Orden de Siembra -->
+            <section class="page-section" id="page-siembra">
+                <h1 class="page-title">Orden de Siembra</h1>
+                <p class="page-subtitle">Germinación, enraizamiento o trasplante para propagación</p>
+
+                <div class="form-card">
+                    <div class="card-header-custom">
+                        <div class="card-icon">
+                            <i class="bi bi-flower1"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Datos de la Orden</h3>
+                            <p class="card-description">Información general del proceso de siembra</p>
+                        </div>
+                    </div>
+
+                    <form id="formSiembra">
+                        <div class="row g-4">
+                            <div class="col-md-3">
+                                <label class="form-label">Variedad</label>
+                                <input type="text" class="form-control" placeholder="Variedad">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Quimiotipo</label>
+                                <input type="text" class="form-control" placeholder="Quimiotipo">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Cupo Material Psicoactivo</label>
+                                <input type="text" class="form-control" placeholder="Cupo">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Modalidad</label>
+                                <input type="text" class="form-control" placeholder="Modalidad">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="row g-4">
+                            <div class="col-md-3">
+                                <label class="form-label">Núm. Plantas Madre Cosechadas</label>
+                                <input type="number" class="form-control" placeholder="Número">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Área Cosechada (m²)</label>
+                                <input type="number" step="0.01" class="form-control" placeholder="m²">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Densidad Siembra (plantas/m²)</label>
+                                <input type="number" step="0.01" class="form-control" placeholder="plantas/m²">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Área Total Sembrada (m²)</label>
+                                <input type="number" step="0.01" class="form-control" placeholder="m²">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Ordenado por Supervisor Integral</label>
+                                <input type="text" class="form-control" placeholder="Nombre del supervisor">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Autorizado por Director Técnico</label>
+                                <input type="text" class="form-control" placeholder="Nombre del director">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Lote Planta Madre</label>
+                                <input type="text" class="form-control" placeholder="Lote">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="row g-4">
+                            <div class="col-md-3">
+                                <label class="form-label">Fecha Orden</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Consecutivo Orden</label>
+                                <input type="text" class="form-control" placeholder="Consecutivo">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Semana Programada</label>
+                                <input type="text" class="form-control" placeholder="Semana">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Lote Producción</label>
+                                <input type="text" class="form-control" placeholder="Lote">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <h5 class="section-title">Actividades Programadas</h5>
+                        <div class="table-container">
+                            <table class="table" id="tablaActividades">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha Programada</th>
+                                        <th>Descripción Actividad</th>
+                                        <th>Número de Cama</th>
+                                        <th>Estado Sanitario</th>
+                                        <th>Cantidad Programada</th>
+                                        <th>Cantidad Ejecutada</th>
+                                        <th>Observación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="number" class="form-control"></td>
+                                        <td><input type="text" class="form-control"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="add-row-btn" onclick="agregarFilaActividades()">
+                            <i class="bi bi-plus-circle"></i> Agregar Fila
+                        </button>
+
+                        <div class="section-divider"></div>
+
+                        <h5 class="section-title">Firmas y Autorización</h5>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="signature-box">
+                                    <h6>Orden Autorizada por Área Regulatoria</h6>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" placeholder="Nombre completo">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Cargo</label>
+                                            <input type="text" class="form-control" placeholder="Cargo">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Firma</label>
+                                            <input type="text" class="form-control" placeholder="Firma digital">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Fecha</label>
+                                            <input type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="signature-box">
+                                    <h6>Orden Recibida Por (Líder o Cargo Designado)</h6>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" placeholder="Nombre completo">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Cargo</label>
+                                            <input type="text" class="form-control" placeholder="Cargo">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Firma</label>
+                                            <input type="text" class="form-control" placeholder="Firma digital">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Fecha</label>
+                                            <input type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group-form">
+                            <button type="submit" class="btn-apple">
+                                <i class="bi bi-check-lg me-2"></i>Guardar Orden
+                            </button>
+                            <button type="reset" class="btn-apple-secondary">
+                                <i class="bi bi-arrow-counterclockwise me-2"></i>Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Page 3: Labores de Cultivo -->
+            <section class="page-section" id="page-labores">
+                <h1 class="page-title">Labores de Cultivo</h1>
+                <p class="page-subtitle">Registro y seguimiento de las labores realizadas</p>
+
+                <div class="form-card">
+                    <div class="card-header-custom">
+                        <div class="card-icon">
+                            <i class="bi bi-clipboard-check"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Información del Lote</h3>
+                            <p class="card-description">Datos generales del cultivo</p>
+                        </div>
+                    </div>
+
+                    <form id="formLabores">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <label class="form-label">Lote</label>
+                                <input type="text" class="form-control" placeholder="Número de lote">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Variedad</label>
+                                <input type="text" class="form-control" placeholder="Variedad">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Quimiotipo</label>
+                                <input type="text" class="form-control" placeholder="Quimiotipo">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <h5 class="section-title">Registro de Labores</h5>
+                        <div class="table-container">
+                            <table class="table" id="tablaLabores">
+                                <thead>
+                                    <tr>
+                                        <th>Semana</th>
+                                        <th>Fecha</th>
+                                        <th>Labor</th>
+                                        <th>Cantidad</th>
+                                        <th>Supervisor Aux. Agrícola</th>
+                                        <th>Verific. Sup. Integral</th>
+                                        <th>Verific. Control Calidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="number" class="form-control" placeholder="Sem."></td>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control" placeholder="Labor"></td>
+                                        <td><input type="number" class="form-control" placeholder="Cant."></td>
+                                        <td><input type="text" class="form-control" placeholder="Nombre"></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" class="form-control" placeholder="Sem."></td>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control" placeholder="Labor"></td>
+                                        <td><input type="number" class="form-control" placeholder="Cant."></td>
+                                        <td><input type="text" class="form-control" placeholder="Nombre"></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" class="form-control" placeholder="Sem."></td>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control" placeholder="Labor"></td>
+                                        <td><input type="number" class="form-control" placeholder="Cant."></td>
+                                        <td><input type="text" class="form-control" placeholder="Nombre"></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" class="form-control" placeholder="Sem."></td>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control" placeholder="Labor"></td>
+                                        <td><input type="number" class="form-control" placeholder="Cant."></td>
+                                        <td><input type="text" class="form-control" placeholder="Nombre"></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" class="form-control" placeholder="Sem."></td>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control" placeholder="Labor"></td>
+                                        <td><input type="number" class="form-control" placeholder="Cant."></td>
+                                        <td><input type="text" class="form-control" placeholder="Nombre"></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" class="form-control" placeholder="Sem."></td>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control" placeholder="Labor"></td>
+                                        <td><input type="number" class="form-control" placeholder="Cant."></td>
+                                        <td><input type="text" class="form-control" placeholder="Nombre"></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" class="form-control" placeholder="Sem."></td>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control" placeholder="Labor"></td>
+                                        <td><input type="number" class="form-control" placeholder="Cant."></td>
+                                        <td><input type="text" class="form-control" placeholder="Nombre"></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="number" class="form-control" placeholder="Sem."></td>
+                                        <td><input type="date" class="form-control"></td>
+                                        <td><input type="text" class="form-control" placeholder="Labor"></td>
+                                        <td><input type="number" class="form-control" placeholder="Cant."></td>
+                                        <td><input type="text" class="form-control" placeholder="Nombre"></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                        <td><input type="text" class="form-control" placeholder="Verif."></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="add-row-btn" onclick="agregarFilaLabores()">
+                            <i class="bi bi-plus-circle"></i> Agregar Fila
+                        </button>
+
+                        <div class="btn-group-form">
+                            <button type="submit" class="btn-apple">
+                                <i class="bi bi-check-lg me-2"></i>Guardar Registro
+                            </button>
+                            <button type="reset" class="btn-apple-secondary">
+                                <i class="bi bi-arrow-counterclockwise me-2"></i>Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Success Toast -->
+    <div class="success-toast" id="successToast">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>¡Registro guardado exitosamente!</span>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pageSections = document.querySelectorAll('.page-section');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const headerTitle = document.querySelector('.header-title');
+
+        const pageTitles = {
+            'limpieza': 'Limpieza y Desinfección',
+            'siembra': 'Orden de Siembra',
+            'labores': 'Labores de Cultivo'
+        };
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.dataset.page;
+
+                // Update nav
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // Update pages
+                pageSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(`page-${page}`).classList.add('active');
+
+                // Update header title
+                headerTitle.textContent = pageTitles[page];
+
+                // Close sidebar on mobile
+                if (window.innerWidth < 992) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Mobile menu
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        mobileMenuBtn.addEventListener('click', openSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Add row functions
+        function agregarFilaActividades() {
+            const tbody = document.querySelector('#tablaActividades tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="date" class="form-control"></td>
+                <td><input type="text" class="form-control"></td>
+                <td><input type="text" class="form-control"></td>
+                <td><input type="text" class="form-control"></td>
+                <td><input type="number" class="form-control"></td>
+                <td><input type="number" class="form-control"></td>
+                <td><input type="text" class="form-control"></td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        function agregarFilaLabores() {
+            const tbody = document.querySelector('#tablaLabores tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="number" class="form-control" placeholder="Sem."></td>
+                <td><input type="date" class="form-control"></td>
+                <td><input type="text" class="form-control" placeholder="Labor"></td>
+                <td><input type="number" class="form-control" placeholder="Cant."></td>
+                <td><input type="text" class="form-control" placeholder="Nombre"></td>
+                <td><input type="text" class="form-control" placeholder="Verif."></td>
+                <td><input type="text" class="form-control" placeholder="Verif."></td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        // Form submissions
+        const forms = document.querySelectorAll('form');
+        const successToast = document.getElementById('successToast');
+
+        forms.forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Show success toast
+                successToast.classList.add('show');
+                
+                setTimeout(() => {
+                    successToast.classList.remove('show');
+                }, 3000);
+            });
+        });
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 992) {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>
