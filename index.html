@@ -12,6 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- SheetJS para Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --apple-bg: #f5f5f7;
@@ -74,7 +76,7 @@
         .logo-icon {
     width: 80px;
     height: 80px;
-    background-image: url('images/bglabs_logo.jpeg');  /* Sin el ../ */
+    background-image: url('images/bglabs_logo.jpeg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -440,12 +442,34 @@
             background: #e8e8ed;
         }
 
+        .btn-apple-report {
+            background: linear-gradient(135deg, #34c759 0%, #28a745 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-apple-report:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(52, 199, 89, 0.35);
+        }
+
         .btn-group-form {
             display: flex;
             gap: 12px;
             margin-top: 32px;
             padding-top: 24px;
             border-top: 1px solid var(--apple-border);
+            flex-wrap: wrap;
         }
 
         /* Signature Box */
@@ -631,6 +655,91 @@
             transform: translateY(0);
             opacity: 1;
         }
+
+        /* Report Modal */
+        .report-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .report-modal-overlay.show {
+            display: flex;
+        }
+
+        .report-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .report-modal h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .report-modal p {
+            color: var(--apple-text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .report-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .report-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--apple-input-bg);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .report-option:hover {
+            background: #e8e8ed;
+        }
+
+        .report-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--apple-green);
+        }
+
+        .report-modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
     </style>
 </head>
 <body>
@@ -695,15 +804,15 @@
                         <div class="row g-4">
                             <div class="col-md-4">
                                 <label class="form-label">Área</label>
-                                <input type="text" class="form-control" placeholder="Ingrese el área">
+                                <input type="text" class="form-control" id="area" placeholder="Ingrese el área">
                             </div>
                             <div class="col-md-5">
                                 <label class="form-label">Equipo, Elemento o Herramienta</label>
-                                <input type="text" class="form-control" placeholder="Nombre del equipo">
+                                <input type="text" class="form-control" id="equipo" placeholder="Nombre del equipo">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Código de Equipo</label>
-                                <input type="text" class="form-control" placeholder="Código">
+                                <input type="text" class="form-control" id="codigoEquipo" placeholder="Código">
                             </div>
                         </div>
 
@@ -715,26 +824,26 @@
                                 <label class="form-label">Seleccione el estado actual</label>
                                 <div class="radio-group">
                                     <div class="radio-option">
-                                        <input type="radio" name="estado" id="sucio" value="sucio">
+                                        <input type="radio" name="estado" id="sucio" value="Sucio">
                                         <label for="sucio"><i class="bi bi-x-circle"></i> Sucio</label>
                                     </div>
                                     <div class="radio-option">
-                                        <input type="radio" name="estado" id="proceso" value="proceso">
+                                        <input type="radio" name="estado" id="proceso" value="En Proceso de Limpieza">
                                         <label for="proceso"><i class="bi bi-arrow-repeat"></i> En Proceso de Limpieza</label>
                                     </div>
                                     <div class="radio-option">
-                                        <input type="radio" name="estado" id="limpio" value="limpio">
+                                        <input type="radio" name="estado" id="limpio" value="Limpio">
                                         <label for="limpio"><i class="bi bi-check-circle"></i> Limpio</label>
                                     </div>
                                     <div class="radio-option">
-                                        <input type="radio" name="estado" id="sanitizado" value="sanitizado">
+                                        <input type="radio" name="estado" id="sanitizado" value="Sanitizado">
                                         <label for="sanitizado"><i class="bi bi-shield-check"></i> Sanitizado</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Fecha de Estado</label>
-                                <input type="datetime-local" class="form-control">
+                                <input type="datetime-local" class="form-control" id="fechaEstado">
                             </div>
                         </div>
 
@@ -744,19 +853,19 @@
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <label class="form-label">Producto Anterior</label>
-                                <input type="text" class="form-control" placeholder="Producto anterior">
+                                <input type="text" class="form-control" id="productoAnterior" placeholder="Producto anterior">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Lote Producto Anterior</label>
-                                <input type="text" class="form-control" placeholder="Lote">
+                                <input type="text" class="form-control" id="loteAnterior" placeholder="Lote">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Producto en Proceso</label>
-                                <input type="text" class="form-control" placeholder="Producto en proceso">
+                                <input type="text" class="form-control" id="productoProceso" placeholder="Producto en proceso">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Lote Producto en Proceso</label>
-                                <input type="text" class="form-control" placeholder="Lote">
+                                <input type="text" class="form-control" id="loteProceso" placeholder="Lote">
                             </div>
                         </div>
 
@@ -766,27 +875,27 @@
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <label class="form-label">Agente de Limpieza y Concentración</label>
-                                <input type="text" class="form-control" placeholder="Agente de limpieza">
+                                <input type="text" class="form-control" id="agenteLimpieza" placeholder="Agente de limpieza">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Desinfectante de Rotación y Concentración</label>
-                                <input type="text" class="form-control" placeholder="Desinfectante">
+                                <input type="text" class="form-control" id="desinfectante" placeholder="Desinfectante">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Fecha y Hora de Realización</label>
-                                <input type="datetime-local" class="form-control">
+                                <input type="datetime-local" class="form-control" id="fechaRealizacion">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Vigencia de Limpieza (4 días)</label>
-                                <input type="datetime-local" class="form-control">
+                                <input type="datetime-local" class="form-control" id="vigencia">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Realizado por</label>
-                                <input type="text" class="form-control" placeholder="Nombre">
+                                <input type="text" class="form-control" id="realizadoPor" placeholder="Nombre">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Verificado por</label>
-                                <input type="text" class="form-control" placeholder="Nombre">
+                                <input type="text" class="form-control" id="verificadoPor" placeholder="Nombre">
                             </div>
                         </div>
 
@@ -795,7 +904,7 @@
                         <h5 class="section-title">Observaciones</h5>
                         <div class="row">
                             <div class="col-12">
-                                <textarea class="form-control" placeholder="Escriba sus observaciones aquí..."></textarea>
+                                <textarea class="form-control" id="observaciones" placeholder="Escriba sus observaciones aquí..."></textarea>
                             </div>
                         </div>
 
@@ -805,6 +914,9 @@
                             </button>
                             <button type="reset" class="btn-apple-secondary">
                                 <i class="bi bi-arrow-counterclockwise me-2"></i>Limpiar
+                            </button>
+                            <button type="button" class="btn-apple-report" onclick="abrirModalReporte()">
+                                <i class="bi bi-file-earmark-spreadsheet"></i>Generar Reporte Excel
                             </button>
                         </div>
                     </form>
@@ -1184,7 +1296,46 @@
     <!-- Success Toast -->
     <div class="success-toast" id="successToast">
         <i class="bi bi-check-circle-fill"></i>
-        <span>¡Registro guardado exitosamente!</span>
+        <span id="toastMessage">¡Registro guardado exitosamente!</span>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="report-modal-overlay" id="reportModal">
+        <div class="report-modal">
+            <h3><i class="bi bi-file-earmark-spreadsheet me-2"></i>Generar Reporte</h3>
+            <p>Seleccione el tipo de reporte que desea generar:</p>
+            
+            <div class="report-options">
+                <label class="report-option">
+                    <input type="checkbox" id="reportActual" checked>
+                    <div>
+                        <strong>Datos del Formulario Actual</strong>
+                        <div style="font-size: 13px; color: var(--apple-text-secondary);">Exporta los datos ingresados en el formulario</div>
+                    </div>
+                </label>
+                <label class="report-option">
+                    <input type="checkbox" id="reportHistorico" checked>
+                    <div>
+                        <strong>Histórico de Registros (Demo)</strong>
+                        <div style="font-size: 13px; color: var(--apple-text-secondary);">Incluye datos de ejemplo de registros anteriores</div>
+                    </div>
+                </label>
+                <label class="report-option">
+                    <input type="checkbox" id="reportResumen">
+                    <div>
+                        <strong>Resumen Estadístico</strong>
+                        <div style="font-size: 13px; color: var(--apple-text-secondary);">Estadísticas de limpieza por área y estado</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="report-modal-buttons">
+                <button class="btn-apple-secondary" onclick="cerrarModalReporte()">Cancelar</button>
+                <button class="btn-apple-report" onclick="generarReporteExcel()">
+                    <i class="bi bi-download"></i> Descargar Excel
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
@@ -1282,15 +1433,17 @@
         forms.forEach(form => {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                
-                // Show success toast
-                successToast.classList.add('show');
-                
-                setTimeout(() => {
-                    successToast.classList.remove('show');
-                }, 3000);
+                showToast('¡Registro guardado exitosamente!');
             });
         });
+
+        function showToast(message) {
+            document.getElementById('toastMessage').textContent = message;
+            successToast.classList.add('show');
+            setTimeout(() => {
+                successToast.classList.remove('show');
+            }, 3000);
+        }
 
         // Handle resize
         window.addEventListener('resize', () => {
@@ -1298,6 +1451,232 @@
                 closeSidebar();
             }
         });
+
+        // ========== FUNCIONALIDAD DE REPORTES EXCEL ==========
+
+        function abrirModalReporte() {
+            document.getElementById('reportModal').classList.add('show');
+        }
+
+        function cerrarModalReporte() {
+            document.getElementById('reportModal').classList.remove('show');
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('reportModal').addEventListener('click', (e) => {
+            if (e.target.id === 'reportModal') {
+                cerrarModalReporte();
+            }
+        });
+
+        function obtenerDatosFormulario() {
+            const estadoRadio = document.querySelector('input[name="estado"]:checked');
+            return {
+                area: document.getElementById('area')?.value || '',
+                equipo: document.getElementById('equipo')?.value || '',
+                codigoEquipo: document.getElementById('codigoEquipo')?.value || '',
+                estado: estadoRadio ? estadoRadio.value : '',
+                fechaEstado: document.getElementById('fechaEstado')?.value || '',
+                productoAnterior: document.getElementById('productoAnterior')?.value || '',
+                loteAnterior: document.getElementById('loteAnterior')?.value || '',
+                productoProceso: document.getElementById('productoProceso')?.value || '',
+                loteProceso: document.getElementById('loteProceso')?.value || '',
+                agenteLimpieza: document.getElementById('agenteLimpieza')?.value || '',
+                desinfectante: document.getElementById('desinfectante')?.value || '',
+                fechaRealizacion: document.getElementById('fechaRealizacion')?.value || '',
+                vigencia: document.getElementById('vigencia')?.value || '',
+                realizadoPor: document.getElementById('realizadoPor')?.value || '',
+                verificadoPor: document.getElementById('verificadoPor')?.value || '',
+                observaciones: document.getElementById('observaciones')?.value || ''
+            };
+        }
+
+        function generarDatosHistoricos() {
+            const areas = ['Producción A', 'Producción B', 'Laboratorio', 'Almacén', 'Cuarto de Cultivo 1', 'Cuarto de Cultivo 2', 'Área de Secado'];
+            const equipos = ['Tanque de mezclado TM-001', 'Mesa de trabajo MT-003', 'Balanza analítica BA-002', 'Estante metálico EM-005', 'Sistema de riego SR-001', 'Cámara de germinación CG-002', 'Extractor de aire EA-001'];
+            const estados = ['Limpio', 'Sanitizado', 'En Proceso de Limpieza', 'Sucio'];
+            const agentes = ['Hipoclorito de sodio 0.5%', 'Detergente neutro 2%', 'Alcohol isopropílico 70%', 'Peróxido de hidrógeno 3%'];
+            const desinfectantes = ['Amonio cuaternario 1%', 'Glutaraldehído 2%', 'Ácido peracético 0.2%', 'Clorhexidina 2%'];
+            const personas = ['Juan Pérez', 'María García', 'Carlos López', 'Ana Martínez', 'Pedro Rodríguez', 'Laura Sánchez'];
+
+            const datos = [];
+            const hoy = new Date();
+
+            for (let i = 0; i < 25; i++) {
+                const fechaBase = new Date(hoy);
+                fechaBase.setDate(fechaBase.getDate() - Math.floor(Math.random() * 30));
+                
+                const fechaVigencia = new Date(fechaBase);
+                fechaVigencia.setDate(fechaVigencia.getDate() + 4);
+
+                datos.push({
+                    id: `LD-${String(i + 1).padStart(4, '0')}`,
+                    area: areas[Math.floor(Math.random() * areas.length)],
+                    equipo: equipos[Math.floor(Math.random() * equipos.length)],
+                    codigo: `EQ-${String(Math.floor(Math.random() * 999) + 1).padStart(3, '0')}`,
+                    estado: estados[Math.floor(Math.random() * estados.length)],
+                    fechaEstado: fechaBase.toISOString().split('T')[0],
+                    productoAnterior: `Producto ${String.fromCharCode(65 + Math.floor(Math.random() * 10))}`,
+                    loteAnterior: `LOT-${Math.floor(Math.random() * 9000) + 1000}`,
+                    productoProceso: `Producto ${String.fromCharCode(65 + Math.floor(Math.random() * 10))}`,
+                    loteProceso: `LOT-${Math.floor(Math.random() * 9000) + 1000}`,
+                    agenteLimpieza: agentes[Math.floor(Math.random() * agentes.length)],
+                    desinfectante: desinfectantes[Math.floor(Math.random() * desinfectantes.length)],
+                    fechaRealizacion: fechaBase.toISOString().split('T')[0],
+                    vigencia: fechaVigencia.toISOString().split('T')[0],
+                    realizadoPor: personas[Math.floor(Math.random() * personas.length)],
+                    verificadoPor: personas[Math.floor(Math.random() * personas.length)],
+                    observaciones: Math.random() > 0.7 ? 'Sin observaciones' : 'Proceso completado según protocolo'
+                });
+            }
+
+            return datos;
+        }
+
+        function generarResumenEstadistico(datosHistoricos) {
+            // Resumen por estado
+            const estadoCount = {};
+            const areaCount = {};
+            
+            datosHistoricos.forEach(d => {
+                estadoCount[d.estado] = (estadoCount[d.estado] || 0) + 1;
+                areaCount[d.area] = (areaCount[d.area] || 0) + 1;
+            });
+
+            const resumenEstado = Object.entries(estadoCount).map(([estado, cantidad]) => ({
+                'Estado': estado,
+                'Cantidad': cantidad,
+                'Porcentaje': ((cantidad / datosHistoricos.length) * 100).toFixed(1) + '%'
+            }));
+
+            const resumenArea = Object.entries(areaCount).map(([area, cantidad]) => ({
+                'Área': area,
+                'Total Limpiezas': cantidad,
+                'Promedio Semanal': (cantidad / 4).toFixed(1)
+            }));
+
+            return { resumenEstado, resumenArea };
+        }
+
+        function generarReporteExcel() {
+            const incluirActual = document.getElementById('reportActual').checked;
+            const incluirHistorico = document.getElementById('reportHistorico').checked;
+            const incluirResumen = document.getElementById('reportResumen').checked;
+
+            if (!incluirActual && !incluirHistorico && !incluirResumen) {
+                alert('Por favor seleccione al menos un tipo de reporte');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            // Hoja 1: Datos del formulario actual
+            if (incluirActual) {
+                const datosActuales = obtenerDatosFormulario();
+                const wsActual = XLSX.utils.aoa_to_sheet([
+                    ['REPORTE DE LIMPIEZA Y DESINFECCIÓN - BG LABS COLOMBIA'],
+                    ['Fecha de generación:', new Date().toLocaleString('es-CO')],
+                    [],
+                    ['INFORMACIÓN GENERAL'],
+                    ['Campo', 'Valor'],
+                    ['Área', datosActuales.area],
+                    ['Equipo/Herramienta', datosActuales.equipo],
+                    ['Código de Equipo', datosActuales.codigoEquipo],
+                    ['Estado', datosActuales.estado],
+                    ['Fecha de Estado', datosActuales.fechaEstado],
+                    [],
+                    ['INFORMACIÓN DEL PRODUCTO'],
+                    ['Producto Anterior', datosActuales.productoAnterior],
+                    ['Lote Producto Anterior', datosActuales.loteAnterior],
+                    ['Producto en Proceso', datosActuales.productoProceso],
+                    ['Lote Producto en Proceso', datosActuales.loteProceso],
+                    [],
+                    ['AGENTES Y TIEMPOS'],
+                    ['Agente de Limpieza', datosActuales.agenteLimpieza],
+                    ['Desinfectante', datosActuales.desinfectante],
+                    ['Fecha de Realización', datosActuales.fechaRealizacion],
+                    ['Vigencia de Limpieza', datosActuales.vigencia],
+                    ['Realizado por', datosActuales.realizadoPor],
+                    ['Verificado por', datosActuales.verificadoPor],
+                    [],
+                    ['OBSERVACIONES'],
+                    [datosActuales.observaciones]
+                ]);
+
+                // Estilos para la hoja actual
+                wsActual['!cols'] = [{ wch: 25 }, { wch: 40 }];
+                wsActual['!merges'] = [
+                    { s: { r: 0, c: 0 }, e: { r: 0, c: 1 } }
+                ];
+
+                XLSX.utils.book_append_sheet(wb, wsActual, 'Registro Actual');
+            }
+
+            // Hoja 2: Histórico de registros
+            if (incluirHistorico) {
+                const datosHistoricos = generarDatosHistoricos();
+                const encabezados = ['ID', 'Área', 'Equipo', 'Código', 'Estado', 'Fecha Estado', 
+                    'Producto Anterior', 'Lote Anterior', 'Producto Proceso', 'Lote Proceso',
+                    'Agente Limpieza', 'Desinfectante', 'Fecha Realización', 'Vigencia',
+                    'Realizado Por', 'Verificado Por', 'Observaciones'];
+                
+                const datosArray = datosHistoricos.map(d => [
+                    d.id, d.area, d.equipo, d.codigo, d.estado, d.fechaEstado,
+                    d.productoAnterior, d.loteAnterior, d.productoProceso, d.loteProceso,
+                    d.agenteLimpieza, d.desinfectante, d.fechaRealizacion, d.vigencia,
+                    d.realizadoPor, d.verificadoPor, d.observaciones
+                ]);
+
+                const wsHistorico = XLSX.utils.aoa_to_sheet([
+                    ['HISTÓRICO DE REGISTROS DE LIMPIEZA Y DESINFECCIÓN'],
+                    ['Generado el:', new Date().toLocaleString('es-CO')],
+                    [],
+                    encabezados,
+                    ...datosArray
+                ]);
+
+                wsHistorico['!cols'] = encabezados.map(() => ({ wch: 18 }));
+                XLSX.utils.book_append_sheet(wb, wsHistorico, 'Histórico');
+
+                // Hoja 3: Resumen estadístico
+                if (incluirResumen) {
+                    const { resumenEstado, resumenArea } = generarResumenEstadistico(datosHistoricos);
+                    
+                    const wsResumen = XLSX.utils.aoa_to_sheet([
+                        ['RESUMEN ESTADÍSTICO DE LIMPIEZA Y DESINFECCIÓN'],
+                        ['Período: Últimos 30 días'],
+                        ['Generado el:', new Date().toLocaleString('es-CO')],
+                        [],
+                        ['RESUMEN POR ESTADO'],
+                        ['Estado', 'Cantidad', 'Porcentaje'],
+                        ...resumenEstado.map(r => [r.Estado, r.Cantidad, r.Porcentaje]),
+                        [],
+                        [],
+                        ['RESUMEN POR ÁREA'],
+                        ['Área', 'Total Limpiezas', 'Promedio Semanal'],
+                        ...resumenArea.map(r => [r['Área'], r['Total Limpiezas'], r['Promedio Semanal']]),
+                        [],
+                        [],
+                        ['INDICADORES CLAVE'],
+                        ['Indicador', 'Valor'],
+                        ['Total de registros', datosHistoricos.length],
+                        ['Áreas activas', Object.keys(resumenArea).length],
+                        ['Tasa de cumplimiento sanitizado', 
+                            ((datosHistoricos.filter(d => d.estado === 'Sanitizado').length / datosHistoricos.length) * 100).toFixed(1) + '%']
+                    ]);
+
+                    wsResumen['!cols'] = [{ wch: 30 }, { wch: 20 }, { wch: 20 }];
+                    XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen Estadístico');
+                }
+            }
+
+            // Generar y descargar el archivo
+            const fechaArchivo = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `Reporte_Limpieza_BGLabs_${fechaArchivo}.xlsx`);
+
+            cerrarModalReporte();
+            showToast('¡Reporte Excel generado exitosamente!');
+        }
     </script>
 </body>
 </html>
